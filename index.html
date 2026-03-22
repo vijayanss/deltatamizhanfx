@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Delta Tamizhan Fx | Official Store</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <button class="menu-btn" onclick="toggleMenu(true)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <div class="brand-name">Delta Tamizhan Fx</div>
+            </div>
+            <div class="nav-right">
+                <div class="cart-trigger" onclick="toggleCart(true)">
+                    <span class="cart-label">Cart</span>
+                    <span id="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="nav-drawer" class="drawer left">
+        <div class="drawer-header">
+            <h3>Explore</h3>
+            <button class="close-btn" onclick="toggleMenu(false)">&times;</button>
+        </div>
+        <div class="drawer-content">
+            <div class="menu-item" onclick="toggleMenu(false)">Home</div>
+            <div class="menu-item" onclick="toggleDownloads(true)">My Downloads</div>
+            <a href="https://www.instagram.com/delta_tamizhan_fx" target="_blank" class="menu-item no-decoration">Support (Instagram)</a>
+        </div>
+    </div>
+
+    <div id="cart-drawer" class="drawer right">
+        <div class="drawer-header">
+            <h3>Your Cart</h3>
+            <button class="close-btn" onclick="toggleCart(false)">&times;</button>
+        </div>
+        <div id="cart-items-list" class="drawer-body"></div>
+        <div class="drawer-footer">
+            <div class="total-row">
+                <span>Total Amount</span>
+                <span id="cart-total">₹0</span>
+            </div>
+            <button class="action-btn" onclick="startCheckout()">Checkout Now</button>
+        </div>
+    </div>
+
+    <div id="downloads-drawer" class="drawer left">
+        <div class="drawer-header">
+            <h3>Downloads</h3>
+            <button class="close-btn" onclick="toggleDownloads(false)">&times;</button>
+        </div>
+        <div class="drawer-body">
+            <p class="input-hint">Enter Order ID to unlock files</p>
+            <input type="text" id="order-id-input" placeholder="e.g. DTX101" class="styled-input">
+            <button class="action-btn" style="margin-top: 16px" onclick="checkAccess()">Access Files</button>
+            <div id="files-list" class="files-container" style="display:none; margin-top:20px;">
+                <div id="available-links"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ui-overlay" class="overlay" onclick="closeAll()"></div>
+
+    <main class="container">
+        <header class="hero">
+            <h1>Premium Assets</h1>
+            <p>Elevate your editing with industry-standard presets.</p>
+        </header>
+
+        <div class="product-grid">
+            <div class="card">
+                <div class="thumb ae-bg"></div>
+                <div class="card-content">
+                    <h4>After Effects Quality Enhancer CC</h4>
+                    <p class="product-desc">Advanced sharpening and color depth presets.</p>
+                    <div class="card-footer">
+                        <span class="price">₹299</span>
+                        <button class="add-btn" onclick="addItem('After Effects Quality Enhancer CC', 299)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="thumb topaz-bg"></div>
+                <div class="card-content">
+                    <h4>Topaz AI High-Quality Settings</h4>
+                    <p class="product-desc">Crystal-clear 4K upscaling configurations.</p>
+                    <div class="card-footer">
+                        <span class="price">₹299</span>
+                        <button class="add-btn" onclick="addItem('Topaz AI High-Quality Settings', 299)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="thumb encoder-bg"></div>
+                <div class="card-content">
+                    <h4>Adobe Media Encoder Lossless</h4>
+                    <p class="product-desc">Maximum quality export at efficient sizes.</p>
+                    <div class="card-footer">
+                        <span class="price">₹199</span>
+                        <button class="add-btn" onclick="addItem('Adobe Media Encoder Lossless', 199)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
