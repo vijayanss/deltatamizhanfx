@@ -40,8 +40,8 @@
                 <button class="action-btn signup-secondary" id="signup-trigger">Create Account</button>
             </div>
             
-            <div id="user-profile" style="display:none; flex-direction: column;">
-                <div class="profile-content">
+            <div id="user-profile" style="display:none; flex-direction: column; height: 100%;">
+                <div style="flex-grow: 1;">
                     <p id="display-user-email" class="user-email-text"></p>
                     <div class="menu-item" id="my-purchases-btn">My Purchases</div>
                 </div>
@@ -50,7 +50,7 @@
 
             <div id="purchases-view" style="display:none;">
                 <button id="back-to-profile" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:600; margin-bottom:20px; font-family:inherit;">← Back</button>
-                <h4 style="margin-bottom:15px; text-transform:uppercase; font-size:0.8rem; letter-spacing:1px;">My Assets</h4>
+                <h4 style="margin-bottom:15px; text-transform:uppercase; font-size:0.8rem; letter-spacing:1px; color:var(--primary);">My Assets</h4>
                 <div id="purchased-list-container"></div>
             </div>
         </div>
@@ -67,7 +67,7 @@
                 <span>Total</span>
                 <span id="cart-total"><span class="r-sym">₹</span>0</span>
             </div>
-            <button class="action-btn checkout-btn login-primary" id="checkout-trigger">Proceed to Payment</button>
+            <button class="action-btn login-primary" id="checkout-trigger">Proceed to Payment</button>
         </div>
     </div>
 
@@ -75,7 +75,7 @@
         <div style="background:var(--surface); padding:40px; border-radius:24px; text-align:center; border:1px solid var(--primary); width:80%; max-width:400px;">
             <div style="font-size:3rem; margin-bottom:10px;">✅</div>
             <h2 style="color:var(--primary); margin-bottom:10px;">Success!</h2>
-            <p style="color:var(--text-dim); margin-bottom:20px;">Task completed successfully.</p>
+            <p style="color:var(--text-dim); margin-bottom:20px;">Task completed.</p>
             <button class="action-btn login-primary" id="close-popup">Continue</button>
         </div>
     </div>
