@@ -22,7 +22,6 @@ const products = [
     { id: 3, name: "Adobe Media Encoder Lossless", price: 1, img: "https://i.postimg.cc/qqm9y9K4/ME.jpg" }
 ];
 
-// Secure links mapping
 const SECURE_LINKS = {
     1: "https://drive.google.com/drive/folders/1FiMYtDWVqecIKLbmMoWuvtVcx-Txrab6",
     2: "https://drive.google.com/drive/folders/1NUrYq4Xl8eN3uQJG80YQtshIGUjRAim_",

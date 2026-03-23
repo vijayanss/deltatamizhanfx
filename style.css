@@ -3,6 +3,9 @@
 body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
 .r-sym { font-family: 'Inter', sans-serif; }
 
+/* AD RUNNING AREA HELPER */
+.ad-running-area { width: 100%; text-align: center; overflow: hidden; }
+
 /* NAVBAR */
 .navbar { position: fixed; top: 0; width: 100%; height: 72px; background: rgba(8,9,10,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 1000; }
 .nav-container { max-width: 1200px; margin: 0 auto; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
@@ -35,18 +38,17 @@ body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--t
 .hero-title { font-size: 2.8rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; background: linear-gradient(to bottom, #fff 60%, var(--text-dim)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .hero-subtitle { color: var(--text-dim); font-size: 0.95rem; max-width: 500px; margin: 0 auto 25px; line-height: 1.6; }
 .hero-divider { width: 60px; height: 3px; background: var(--primary); margin: 0 auto; border-radius: 10px; box-shadow: 0 0 15px var(--primary); }
+
 @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.2); } 70% { box-shadow: 0 0 0 10px rgba(0, 242, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0); } }
 
 /* BUTTONS & UI */
 .menu-item { padding: 16px; margin-bottom: 10px; border-radius: 14px; font-size: 0.9rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: space-between; font-weight: 600; background: linear-gradient(135deg, rgba(0, 242, 255, 0.1), rgba(0, 242, 255, 0.05)); border: 1px solid rgba(0, 242, 255, 0.15); color: var(--primary); }
 .menu-item::after { content: '→'; opacity: 0.7; }
-
 .action-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; }
 .login-primary { background: var(--primary); color: #000; }
 .signup-secondary { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
 .logout-btn { background: rgba(255, 77, 77, 0.08); color: #ff4d4d; border: 1px solid rgba(255, 77, 77, 0.15); margin-top: auto; }
 .small-btn { padding: 8px 15px; font-size: 0.7rem; width: auto; text-decoration: none; display: inline-block; margin: 0; }
-
 .remove-btn { background: rgba(255, 77, 77, 0.05); border: 1px solid rgba(255, 77, 77, 0.1); color: #ff4d4d; font-size: 0.65rem; padding: 4px 10px; border-radius: 6px; cursor: pointer; margin-top: 8px; font-weight: 600; text-transform: uppercase; }
 
 /* PRODUCT GRID */
