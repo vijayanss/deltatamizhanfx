@@ -17,10 +17,17 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const products = [
-    { id: 1, name: "After Effects Quality Enhancer CC", price: 1, img: "https://i.postimg.cc/Twc8YyYV/CC.jpg", link: "https://drive.google.com/drive/folders/1FiMYtDWVqecIKLbmMoWuvtVcx-Txrab6" },
-    { id: 2, name: "Topaz AI High-Quality Settings", price: 1, img: "https://i.postimg.cc/QxCLhdLN/Topaz.jpg", link: "https://drive.google.com/drive/folders/1NUrYq4Xl8eN3uQJG80YQtshIGUjRAim_" },
-    { id: 3, name: "Adobe Media Encoder Lossless", price: 1, img: "https://i.postimg.cc/qqm9y9K4/ME.jpg", link: "https://drive.google.com/drive/folders/1rYL3TLfQ0Tq7tS-0Rw71thHPD3IOCLYa" }
+    { id: 1, name: "After Effects Quality Enhancer CC", price: 1, img: "https://i.postimg.cc/Twc8YyYV/CC.jpg" },
+    { id: 2, name: "Topaz AI High-Quality Settings", price: 1, img: "https://i.postimg.cc/QxCLhdLN/Topaz.jpg" },
+    { id: 3, name: "Adobe Media Encoder Lossless", price: 1, img: "https://i.postimg.cc/qqm9y9K4/ME.jpg" }
 ];
+
+// Secure links mapping
+const SECURE_LINKS = {
+    1: "https://drive.google.com/drive/folders/1FiMYtDWVqecIKLbmMoWuvtVcx-Txrab6",
+    2: "https://drive.google.com/drive/folders/1NUrYq4Xl8eN3uQJG80YQtshIGUjRAim_",
+    3: "https://drive.google.com/drive/folders/1rYL3TLfQ0Tq7tS-0Rw71thHPD3IOCLYa"
+};
 
 let cart = [];
 let purchasedAssets = []; 
@@ -29,7 +36,7 @@ async function loadUserPurchases(uid) {
     try {
         const docSnap = await getDoc(doc(db, "users", uid));
         if (docSnap.exists()) { purchasedAssets = docSnap.data().purchases || []; }
-    } catch(e) { console.log(e); }
+    } catch(e) { console.error(e); }
 }
 
 async function savePurchaseToDB(uid, newItems) {
@@ -48,25 +55,9 @@ onAuthStateChanged(auth, async (user) => {
     } else {
         document.getElementById('auth-section').style.display = 'block';
         document.getElementById('user-profile').style.display = 'none';
+        purchasedAssets = [];
     }
 });
-
-document.getElementById('login-trigger').onclick = async () => {
-    const e = document.getElementById('login-email').value;
-    const p = document.getElementById('login-password').value;
-    try { await signInWithEmailAndPassword(auth, e, p); } catch(err) { alert(err.message); }
-};
-
-document.getElementById('signup-trigger').onclick = async () => {
-    const e = document.getElementById('login-email').value;
-    const p = document.getElementById('login-password').value;
-    try { 
-        await createUserWithEmailAndPassword(auth, e, p); 
-        document.getElementById('success-popup').style.display = 'flex';
-    } catch(err) { alert(err.message); }
-};
-
-document.getElementById('logout-trigger').onclick = () => signOut(auth);
 
 const toggleDrawer = (id, show) => {
     const el = document.getElementById(id);
@@ -80,17 +71,31 @@ document.getElementById('cart-open').onclick = () => { toggleDrawer('cart-drawer
 document.getElementById('cart-close').onclick = () => toggleDrawer('cart-drawer', false);
 document.getElementById('ui-overlay').onclick = () => { toggleDrawer('nav-drawer', false); toggleDrawer('cart-drawer', false); };
 
+document.getElementById('login-trigger').onclick = async () => {
+    const e = document.getElementById('login-email').value;
+    const p = document.getElementById('login-password').value;
+    try { await signInWithEmailAndPassword(auth, e, p); } catch(err) { alert(err.message); }
+};
+document.getElementById('signup-trigger').onclick = async () => {
+    const e = document.getElementById('login-email').value;
+    const p = document.getElementById('login-password').value;
+    try { await createUserWithEmailAndPassword(auth, e, p); document.getElementById('success-popup').style.display = 'flex'; } catch(err) { alert(err.message); }
+};
+document.getElementById('logout-trigger').onclick = () => signOut(auth);
+
 document.getElementById('my-purchases-btn').onclick = () => {
     document.getElementById('user-profile').style.display = 'none';
     document.getElementById('purchases-view').style.display = 'block';
     const container = document.getElementById('purchased-list-container');
-    container.innerHTML = purchasedAssets.length === 0 ? '<p style="color:var(--text-dim); font-size:0.8rem;">No assets.</p>' : 
-        purchasedAssets.map(item => `
-            <div style="background:var(--surface-light); padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid rgba(255,255,255,0.05);">
-                <span style="font-size:0.85rem; display:block; margin-bottom:10px;">${item.name}</span>
-                <a href="${item.link}" target="_blank" class="action-btn login-primary" style="padding:8px 15px; font-size:0.7rem; width:auto; text-decoration:none; display:inline-block; margin:0;">Download</a>
+    container.innerHTML = purchasedAssets.length === 0 ? '<p style="color:var(--text-dim); font-size:0.8rem; padding:10px;">No assets purchased.</p>' : 
+        purchasedAssets.map(item => {
+            const secureUrl = SECURE_LINKS[item.id] || "#";
+            return `
+            <div class="purchase-card">
+                <span class="purchase-name">${item.name}</span>
+                <a href="${secureUrl}" target="_blank" class="action-btn login-primary small-btn">Download</a>
             </div>
-        `).join('');
+        `}).join('');
 };
 
 document.getElementById('back-to-profile').onclick = () => {
@@ -104,7 +109,6 @@ window.addItem = (id) => {
     toggleDrawer('cart-drawer', true);
     renderCart();
 };
-
 window.removeItem = (id) => {
     cart = cart.filter(item => item.id !== id);
     document.getElementById('cart-count').innerText = cart.length;
@@ -114,20 +118,11 @@ window.removeItem = (id) => {
 function renderCart() {
     const list = document.getElementById('cart-items-list');
     let total = 0;
-    if (cart.length === 0) {
-        list.innerHTML = `<p style="text-align:center; color:var(--text-dim); margin-top:20px; font-size:0.9rem;">Cart is empty</p>`;
-    } else {
+    if (cart.length === 0) { list.innerHTML = `<p class="empty-msg">Cart is empty</p>`; } 
+    else {
         list.innerHTML = cart.map(item => {
             total += item.price;
-            return `
-                <div class="cart-item">
-                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                        <span style="font-size:0.85rem; font-weight:500;">${item.name}</span>
-                        <button class="remove-btn" onclick="removeItem(${item.id})">Remove</button>
-                    </div>
-                    <span style="font-weight:700;"><span class="r-sym">₹</span>${item.price}</span>
-                </div>
-            `;
+            return `<div class="cart-item"><div><span>${item.name}</span><button class="remove-btn" onclick="removeItem(${item.id})">Remove</button></div><span class="price-tag">₹${item.price}</span></div>`;
         }).join('');
     }
     document.getElementById('cart-total').innerHTML = `<span class="r-sym">₹</span>${total}`;
@@ -137,7 +132,6 @@ document.getElementById('checkout-trigger').onclick = () => {
     const user = auth.currentUser;
     if (!user) { alert("Login first"); toggleDrawer('nav-drawer', true); return; }
     if (cart.length === 0) return;
-
     const options = {
         "key": "rzp_live_SUb1nskZR2DxTy",
         "amount": cart.reduce((s, i) => s + i.price, 0) * 100,
@@ -160,11 +154,10 @@ document.getElementById('product-list').innerHTML = products.map(p => `
     <div class="card">
         <div class="thumb-container"><img src="${p.img}" class="product-img"></div>
         <div class="card-content">
-            <h4 style="margin-bottom:10px;">${p.name}</h4>
-            <span class="price" style="color:var(--primary); font-weight:700; display:block; margin-bottom:15px;"><span class="r-sym">₹</span>${p.price}</span>
+            <h4>${p.name}</h4>
+            <span class="price"><span class="r-sym">₹</span>${p.price}</span>
             <button class="action-btn login-primary" onclick="addItem(${p.id})">Add to Cart</button>
         </div>
     </div>
 `).join('');
-
 document.getElementById('close-popup').onclick = () => document.getElementById('success-popup').style.display = 'none';

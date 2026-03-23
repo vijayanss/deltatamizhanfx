@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Delta Tamizhan Fx | Store</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -13,13 +13,21 @@
         <div class="nav-container">
             <div class="nav-left">
                 <button class="menu-btn" id="menu-open">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <line x1="3" y1="7" x2="21" y2="7"></line>
+                        <line x1="3" y1="12" x2="15" y2="12"></line>
+                        <line x1="3" y1="17" x2="21" y2="17"></line>
+                    </svg>
                 </button>
                 <div class="brand-name">Delta Tamizhan Fx</div>
             </div>
             <div class="nav-right">
                 <div class="cart-trigger" id="cart-open">
-                    <span class="cart-label">Cart</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
                     <span id="cart-count">0</span>
                 </div>
             </div>
@@ -42,6 +50,7 @@
             
             <div id="user-profile" style="display:none; flex-direction: column; height: 100%;">
                 <div style="flex-grow: 1;">
+                    <span class="label-tiny">Logged In As</span>
                     <p id="display-user-email" class="user-email-text"></p>
                     <div class="menu-item" id="my-purchases-btn">My Purchases</div>
                 </div>
@@ -49,8 +58,8 @@
             </div>
 
             <div id="purchases-view" style="display:none;">
-                <button id="back-to-profile" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:600; margin-bottom:20px; font-family:inherit;">← Back</button>
-                <h4 style="margin-bottom:15px; text-transform:uppercase; font-size:0.8rem; letter-spacing:1px; color:var(--primary);">My Assets</h4>
+                <button id="back-to-profile" class="back-link">← Back</button>
+                <h4 class="view-title">My Assets</h4>
                 <div id="purchased-list-container"></div>
             </div>
         </div>
@@ -63,7 +72,7 @@
         </div>
         <div id="cart-items-list" class="drawer-body"></div>
         <div class="drawer-footer">
-            <div class="total-row" style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:700;">
+            <div class="total-row">
                 <span>Total</span>
                 <span id="cart-total"><span class="r-sym">₹</span>0</span>
             </div>
@@ -71,11 +80,11 @@
         </div>
     </div>
 
-    <div id="success-popup" class="overlay" style="display:none; align-items:center; justify-content:center; z-index:3000;">
-        <div style="background:var(--surface); padding:40px; border-radius:24px; text-align:center; border:1px solid var(--primary); width:80%; max-width:400px;">
+    <div id="success-popup" class="overlay">
+        <div class="popup-card">
             <div style="font-size:3rem; margin-bottom:10px;">✅</div>
-            <h2 style="color:var(--primary); margin-bottom:10px;">Success!</h2>
-            <p style="color:var(--text-dim); margin-bottom:20px;">Task completed.</p>
+            <h2>Success!</h2>
+            <p>Your account has been created.</p>
             <button class="action-btn login-primary" id="close-popup">Continue</button>
         </div>
     </div>
@@ -83,7 +92,13 @@
     <div id="ui-overlay" class="overlay"></div>
 
     <main class="container">
-        <header class="hero"><h1>Premium Assets</h1></header>
+        <header class="hero">
+            <div class="hero-badge">Curated Collection</div>
+            <h1 class="hero-title">Premium Assets</h1>
+            <p class="hero-subtitle">Elevate your edits with industry-standard presets and CCs.</p>
+            <div class="hero-divider"></div>
+        </header>
+
         <div class="product-grid" id="product-list"></div>
     </main>
 
