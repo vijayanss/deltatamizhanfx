@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBndxR-j5FSCNd0RUtvTruQUxUx6-p_EW4",
@@ -13,29 +14,12 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 const products = [
-    { 
-        id: 1, 
-        name: "After Effects Quality Enhancer CC", 
-        price: 1, 
-        img: "https://i.postimg.cc/Twc8YyYV/CC.jpg",
-        link: "https://drive.google.com/drive/folders/1FiMYtDWVqecIKLbmMoWuvtVcx-Txrab6"
-    },
-    { 
-        id: 2, 
-        name: "Topaz AI High-Quality Settings", 
-        price: 1, 
-        img: "https://i.postimg.cc/QxCLhdLN/Topaz.jpg",
-        link: "https://drive.google.com/drive/folders/1NUrYq4Xl8eN3uQJG80YQtshIGUjRAim_"
-    },
-    { 
-        id: 3, 
-        name: "Adobe Media Encoder Lossless", 
-        price: 1, 
-        img: "https://i.postimg.cc/qqm9y9K4/ME.jpg",
-        link: "https://drive.google.com/drive/folders/1rYL3TLfQ0Tq7tS-0Rw71thHPD3IOCLYa"
-    }
+    { id: 1, name: "After Effects Quality Enhancer CC", price: 1, img: "https://i.postimg.cc/Twc8YyYV/CC.jpg", link: "https://drive.google.com/drive/folders/1FiMYtDWVqecIKLbmMoWuvtVcx-Txrab6" },
+    { id: 2, name: "Topaz AI High-Quality Settings", price: 1, img: "https://i.postimg.cc/QxCLhdLN/Topaz.jpg", link: "https://drive.google.com/drive/folders/1NUrYq4Xl8eN3uQJG80YQtshIGUjRAim_" },
+    { id: 3, name: "Adobe Media Encoder Lossless", price: 1, img: "https://i.postimg.cc/qqm9y9K4/ME.jpg", link: "https://drive.google.com/drive/folders/1rYL3TLfQ0Tq7tS-0Rw71thHPD3IOCLYa" }
 ];
 
 let cart = [];
@@ -51,12 +35,34 @@ document.getElementById('menu-open').onclick = () => toggleDrawer('nav-drawer', 
 document.getElementById('menu-close').onclick = () => toggleDrawer('nav-drawer', false);
 document.getElementById('cart-open').onclick = () => { toggleDrawer('cart-drawer', true); renderCart(); };
 document.getElementById('cart-close').onclick = () => toggleDrawer('cart-drawer', false);
-document.getElementById('ui-overlay').onclick = () => { 
-    toggleDrawer('nav-drawer', false); 
-    toggleDrawer('cart-drawer', false); 
-};
+document.getElementById('ui-overlay').onclick = () => { toggleDrawer('nav-drawer', false); toggleDrawer('cart-drawer', false); };
 
-// --- AUTH ---
+// --- LOAD PURCHASES FROM DATABASE ---
+async function loadUserPurchases(uid) {
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        purchasedAssets = docSnap.data().purchases || [];
+    } else {
+        purchasedAssets = [];
+    }
+}
+
+// --- SAVE PURCHASES TO DATABASE ---
+async function savePurchaseToDB(uid, newItems) {
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists()) {
+        await setDoc(docRef, { purchases: newItems });
+    } else {
+        await updateDoc(docRef, {
+            purchases: arrayUnion(...newItems)
+        });
+    }
+}
+
+// --- AUTH LOGIC ---
 document.getElementById('login-trigger').onclick = async () => {
     const e = document.getElementById('login-email').value.trim();
     const p = document.getElementById('login-password').value.trim();
@@ -77,14 +83,17 @@ document.getElementById('logout-trigger').onclick = () => {
     purchasedAssets = [];
 };
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
     document.getElementById('auth-section').style.display = user ? 'none' : 'block';
     document.getElementById('user-profile').style.display = user ? 'flex' : 'none';
     document.getElementById('purchases-view').style.display = 'none';
-    if(user) document.getElementById('display-user-email').innerText = user.email;
+    if(user) {
+        document.getElementById('display-user-email').innerText = user.email;
+        await loadUserPurchases(user.uid); // Fetch data when user logs in/refreshes
+    }
 });
 
-// --- PURCHASES VIEW LOGIC ---
+// --- PURCHASES VIEW ---
 document.getElementById('my-purchases-btn').onclick = () => {
     document.getElementById('user-profile').style.display = 'none';
     document.getElementById('purchases-view').style.display = 'block';
@@ -165,7 +174,11 @@ document.getElementById('checkout-trigger').onclick = () => {
         "currency": "INR",
         "name": "Delta Tamizhan Fx",
         "description": "Premium Asset Purchase",
-        "handler": function (response) {
+        "handler": async function (response) {
+            // Save to Firebase Database permanently
+            await savePurchaseToDB(user.uid, cart);
+            
+            // Update local view
             purchasedAssets = [...purchasedAssets, ...cart];
             cart = [];
             document.getElementById('cart-count').innerText = 0;
@@ -173,7 +186,7 @@ document.getElementById('checkout-trigger').onclick = () => {
             toggleDrawer('cart-drawer', false);
             toggleDrawer('nav-drawer', true);
             document.getElementById('my-purchases-btn').click();
-            alert("Payment Success! Links unlocked in 'My Purchases'.");
+            alert("Payment Success! Links saved to your account.");
         },
         "prefill": { "email": user.email },
         "theme": { "color": "#00f2ff" }
