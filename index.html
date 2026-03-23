@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Delta Tamizhan Fx | Official Store</title>
+    <title>Delta Tamizhan Fx | Store</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-left">
-                <button class="menu-btn" onclick="toggleMenu(true)">
+                <button class="menu-btn" id="menu-open">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
                 <div class="brand-name">Delta Tamizhan Fx</div>
             </div>
             <div class="nav-right">
-                <div class="cart-trigger" onclick="toggleCart(true)">
+                <div class="cart-trigger" id="cart-open">
                     <span class="cart-label">Cart</span>
                     <span id="cart-count">0</span>
                 </div>
@@ -29,91 +28,66 @@
 
     <div id="nav-drawer" class="drawer left">
         <div class="drawer-header">
-            <h3>Explore</h3>
-            <button class="close-btn" onclick="toggleMenu(false)">&times;</button>
+            <h3>Account</h3>
+            <button class="close-btn" id="menu-close">&times;</button>
         </div>
-        <div class="drawer-content">
-            <div class="menu-item" onclick="toggleMenu(false)">Home</div>
-            <div class="menu-item" onclick="toggleDownloads(true)">My Downloads</div>
-            <a href="https://www.instagram.com/delta_tamizhan_fx" target="_blank" class="menu-item no-decoration">Support (Instagram)</a>
+        <div class="drawer-body">
+            <div id="auth-section">
+                <p class="input-hint">Login to access your premium assets</p>
+                <input type="email" id="login-email" placeholder="Email Address" class="styled-input">
+                <input type="password" id="login-password" placeholder="Password" class="styled-input">
+                <button class="action-btn login-primary" id="login-trigger">Login</button>
+                <button class="action-btn signup-secondary" id="signup-trigger">Create Account</button>
+            </div>
+            
+            <div id="user-profile" style="display:none; flex-direction: column;">
+                <div class="profile-content">
+                    <p id="display-user-email" class="user-email-text"></p>
+                    <div class="menu-item" id="my-purchases-btn">My Purchases</div>
+                </div>
+                <button class="action-btn logout-btn" id="logout-trigger">Logout Account</button>
+            </div>
+
+            <div id="purchases-view" style="display:none;">
+                <button id="back-to-profile" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:600; margin-bottom:20px; font-family:inherit;">← Back</button>
+                <h4 style="margin-bottom:15px; text-transform:uppercase; font-size:0.8rem; letter-spacing:1px;">My Assets</h4>
+                <div id="purchased-list-container"></div>
+            </div>
         </div>
     </div>
 
     <div id="cart-drawer" class="drawer right">
         <div class="drawer-header">
             <h3>Your Cart</h3>
-            <button class="close-btn" onclick="toggleCart(false)">&times;</button>
+            <button class="close-btn" id="cart-close">&times;</button>
         </div>
         <div id="cart-items-list" class="drawer-body"></div>
         <div class="drawer-footer">
-            <div class="total-row">
-                <span>Total Amount</span>
-                <span id="cart-total">₹0</span>
+            <div class="total-row" style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:700;">
+                <span>Total</span>
+                <span id="cart-total"><span class="r-sym">₹</span>0</span>
             </div>
-            <button class="action-btn" onclick="startCheckout()">Checkout Now</button>
+            <button class="action-btn checkout-btn login-primary" id="checkout-trigger">Proceed to Payment</button>
         </div>
     </div>
 
-    <div id="downloads-drawer" class="drawer left">
-        <div class="drawer-header">
-            <h3>Downloads</h3>
-            <button class="close-btn" onclick="toggleDownloads(false)">&times;</button>
-        </div>
-        <div class="drawer-body">
-            <p class="input-hint">Enter Order ID to unlock files</p>
-            <input type="text" id="order-id-input" placeholder="e.g. DTX101" class="styled-input">
-            <button class="action-btn" style="margin-top: 16px" onclick="checkAccess()">Access Files</button>
-            <div id="files-list" class="files-container" style="display:none; margin-top:20px;">
-                <div id="available-links"></div>
-            </div>
+    <div id="success-popup" class="overlay" style="display:none; align-items:center; justify-content:center; z-index:3000;">
+        <div style="background:var(--surface); padding:40px; border-radius:24px; text-align:center; border:1px solid var(--primary); width:80%; max-width:400px;">
+            <div style="font-size:3rem; margin-bottom:10px;">✅</div>
+            <h2 style="color:var(--primary); margin-bottom:10px;">Success!</h2>
+            <p style="color:var(--text-dim); margin-bottom:20px;">Task completed successfully.</p>
+            <button class="action-btn login-primary" id="close-popup">Continue</button>
         </div>
     </div>
 
-    <div id="ui-overlay" class="overlay" onclick="closeAll()"></div>
+    <div id="ui-overlay" class="overlay"></div>
 
     <main class="container">
-        <header class="hero">
-            <h1>Premium Assets</h1>
-            <p>Elevate your editing with industry-standard presets.</p>
-        </header>
-
-        <div class="product-grid">
-            <div class="card">
-                <div class="thumb ae-bg"></div>
-                <div class="card-content">
-                    <h4>After Effects Quality Enhancer CC</h4>
-                    <p class="product-desc">Advanced sharpening and color depth presets.</p>
-                    <div class="card-footer">
-                        <span class="price">₹299</span>
-                        <button class="add-btn" onclick="addItem('After Effects Quality Enhancer CC', 299)">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="thumb topaz-bg"></div>
-                <div class="card-content">
-                    <h4>Topaz AI High-Quality Settings</h4>
-                    <p class="product-desc">Crystal-clear 4K upscaling configurations.</p>
-                    <div class="card-footer">
-                        <span class="price">₹299</span>
-                        <button class="add-btn" onclick="addItem('Topaz AI High-Quality Settings', 299)">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="thumb encoder-bg"></div>
-                <div class="card-content">
-                    <h4>Adobe Media Encoder Lossless</h4>
-                    <p class="product-desc">Maximum quality export at efficient sizes.</p>
-                    <div class="card-footer">
-                        <span class="price">₹199</span>
-                        <button class="add-btn" onclick="addItem('Adobe Media Encoder Lossless', 199)">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <header class="hero"><h1>Premium Assets</h1></header>
+        <div class="product-grid" id="product-list"></div>
     </main>
 
-    <script src="script.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
