@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Delta Tamizhan Fx | Store</title>
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4632313331885181"
-     crossorigin="anonymous"></script>
-
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4632313331885181" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -17,21 +14,13 @@
         <div class="nav-container">
             <div class="nav-left">
                 <button class="menu-btn" id="menu-open">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                        <line x1="3" y1="7" x2="21" y2="7"></line>
-                        <line x1="3" y1="12" x2="15" y2="12"></line>
-                        <line x1="3" y1="17" x2="21" y2="17"></line>
-                    </svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="7" x2="21" y2="7"></line><line x1="3" y1="12" x2="15" y2="12"></line><line x1="3" y1="17" x2="21" y2="17"></line></svg>
                 </button>
                 <div class="brand-name">Delta Tamizhan Fx</div>
             </div>
             <div class="nav-right">
                 <div class="cart-trigger" id="cart-open">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <path d="M16 10a4 4 0 0 1-8 0"></path>
-                    </svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                     <span id="cart-count">0</span>
                 </div>
             </div>
@@ -47,7 +36,10 @@
             <div id="auth-section">
                 <p class="input-hint">Login to access your premium assets</p>
                 <input type="email" id="login-email" placeholder="Email Address" class="styled-input">
-                <input type="password" id="login-password" placeholder="Password" class="styled-input">
+                <div style="position: relative;">
+                    <input type="password" id="login-password" placeholder="Password" class="styled-input">
+                    <button id="toggle-password" type="button" style="position: absolute; right: 12px; top: 16px; background: none; border: none; color: var(--primary); cursor: pointer; font-size: 0.7rem; font-weight: 700;">SHOW</button>
+                </div>
                 <button class="action-btn login-primary" id="login-trigger">Login</button>
                 <button class="action-btn signup-secondary" id="signup-trigger">Create Account</button>
             </div>
@@ -56,6 +48,9 @@
                     <span class="label-tiny">Logged In As</span>
                     <p id="display-user-email" class="user-email-text"></p>
                     <div class="menu-item" id="my-purchases-btn">My Purchases</div>
+                    <div class="menu-item" id="terms-btn">Terms & Conditions</div>
+                    <div class="menu-item" id="privacy-btn">Privacy Policy</div>
+                    <a href="https://www.instagram.com/delta_tamizhan_fx/" target="_blank" class="menu-item" style="text-decoration: none;">Help & Support</a>
                 </div>
                 <button class="action-btn logout-btn" id="logout-trigger">Logout Account</button>
             </div>
@@ -67,6 +62,14 @@
         </div>
     </div>
 
+    <div id="policies-drawer" class="drawer left">
+        <div class="drawer-header">
+            <h3 id="policy-title">Policy</h3>
+            <button class="close-btn" id="policy-close">&times;</button>
+        </div>
+        <div class="drawer-body" id="policy-content"></div>
+    </div>
+
     <div id="cart-drawer" class="drawer right">
         <div class="drawer-header">
             <h3>Your Cart</h3>
@@ -74,64 +77,47 @@
         </div>
         <div id="cart-items-list" class="drawer-body"></div>
         <div class="drawer-footer">
-            <div class="total-row">
-                <span>Total</span>
-                <span id="cart-total"><span class="r-sym">₹</span>0</span>
-            </div>
+            <div class="total-row"><span>Total</span><span id="cart-total"><span class="r-sym">₹</span>0</span></div>
             <button class="action-btn login-primary" id="checkout-trigger">Proceed to Payment</button>
         </div>
     </div>
 
-    <div id="success-popup" class="overlay">
-        <div class="popup-card">
-            <div style="font-size:3rem; margin-bottom:10px;">✅</div>
-            <h2>Success!</h2>
-            <p>Your account has been created.</p>
-            <button class="action-btn login-primary" id="close-popup">Continue</button>
+    <div id="terms-confirmation-popup" class="overlay" style="z-index: 2500;">
+        <div class="popup-card" style="text-align: left; max-width: 450px;">
+            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 15px; text-align: center;">Terms of Purchase</h2>
+            <div style="font-size: 0.8rem; line-height: 1.6; color: var(--text-dim); margin-bottom: 25px;">
+                <p style="margin-bottom: 12px; color: #fff; font-weight: 600;">By proceeding, you agree to our terms:</p>
+                <ul style="padding-left: 18px; display: flex; flex-direction: column; gap: 8px;">
+                    <li><strong>No Refund:</strong> Digital assets are non-refundable.</li>
+                    <li><strong>Plugins:</strong> Requires S_Sharpen, Bcc Unsharp Mask, Looks, S_SoftFocus.</li>
+                    <li><strong>Software:</strong> You must have Maxon & After Effects.</li>
+                </ul>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="action-btn signup-secondary" id="cancel-payment" style="flex: 1;">Decline</button>
+                <button class="action-btn login-primary" id="accept-terms-payment" style="flex: 2;">Accept & Pay</button>
+            </div>
         </div>
+    </div>
+
+    <div id="success-popup" class="overlay">
+        <div class="popup-card"><div style="font-size:3rem; margin-bottom:10px;">✅</div><h2>Success!</h2><p>Account created.</p><button class="action-btn login-primary" id="close-popup">Continue</button></div>
+    </div>
+
+    <div id="error-popup" class="overlay">
+        <div class="popup-card" style="border-color: #ff4d4d;"><div style="font-size:3rem; margin-bottom:10px;">❌</div><h2 style="color: #ff4d4d;">Auth Error</h2><p id="error-message">Invalid email or password.</p><button class="action-btn logout-btn" id="close-error">Try Again</button></div>
     </div>
 
     <div id="ui-overlay" class="overlay"></div>
 
     <main class="container">
-        <div class="ad-running-area" style="margin-bottom: 30px;">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-4632313331885181"
-                 data-ad-slot="auto"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-
         <header class="hero">
             <div class="hero-badge">Curated Collection</div>
             <h1 class="hero-title">Premium Assets</h1>
             <p class="hero-subtitle">Elevate your edits with industry-standard presets and CCs.</p>
             <div class="hero-divider"></div>
         </header>
-
-        <div class="ad-running-area" style="margin: 40px 0;">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-4632313331885181"
-                 data-ad-slot="auto"
-                 data-ad-format="horizontal"
-                 data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-
         <div class="product-grid" id="product-list"></div>
-
-        <div class="ad-running-area" style="margin-top: 50px;">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-4632313331885181"
-                 data-ad-slot="auto"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
     </main>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

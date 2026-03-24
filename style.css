@@ -28,11 +28,12 @@ body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--t
 .drawer.right { right: -310px; }
 .drawer.left.open { transform: translateX(310px); }
 .drawer.right.open { transform: translateX(-310px); }
+.drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .drawer-header h3 { font-weight: 700; letter-spacing: -0.5px; }
 .close-btn { background: none; border: none; color: var(--text-dim); font-size: 2rem; cursor: pointer; }
 .drawer-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
 
-/* HERO SECTION */
+/* HERO SECTION - ORIGINAL DESIGN */
 .hero { text-align: center; margin-bottom: 60px; padding: 20px 0; }
 .hero-badge { display: inline-block; background: rgba(0, 242, 255, 0.1); color: var(--primary); padding: 6px 16px; border-radius: 100px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; border: 1px solid rgba(0, 242, 255, 0.2); animation: pulse-glow 2s infinite; }
 .hero-title { font-size: 2.8rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; background: linear-gradient(to bottom, #fff 60%, var(--text-dim)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -41,15 +42,18 @@ body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--t
 
 @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.2); } 70% { box-shadow: 0 0 0 10px rgba(0, 242, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0); } }
 
-/* BUTTONS & UI */
+/* BUTTONS & MENU */
 .menu-item { padding: 16px; margin-bottom: 10px; border-radius: 14px; font-size: 0.9rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: space-between; font-weight: 600; background: linear-gradient(135deg, rgba(0, 242, 255, 0.1), rgba(0, 242, 255, 0.05)); border: 1px solid rgba(0, 242, 255, 0.15); color: var(--primary); }
 .menu-item::after { content: '→'; opacity: 0.7; }
-.action-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+.action-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
 .login-primary { background: var(--primary); color: #000; }
 .signup-secondary { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
 .logout-btn { background: rgba(255, 77, 77, 0.08); color: #ff4d4d; border: 1px solid rgba(255, 77, 77, 0.15); margin-top: auto; }
-.small-btn { padding: 8px 15px; font-size: 0.7rem; width: auto; text-decoration: none; display: inline-block; margin: 0; }
-.remove-btn { background: rgba(255, 77, 77, 0.05); border: 1px solid rgba(255, 77, 77, 0.1); color: #ff4d4d; font-size: 0.65rem; padding: 4px 10px; border-radius: 6px; cursor: pointer; margin-top: 8px; font-weight: 600; text-transform: uppercase; }
+
+/* FIX: PURCHASE CARD LAYOUT */
+.purchase-card { background: var(--surface-light); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.purchase-name { font-size: 0.8rem; margin-bottom: 0; font-weight: 500; flex: 1; }
+.small-btn { padding: 8px 15px !important; font-size: 0.7rem !important; width: auto !important; margin: 0 !important; text-decoration: none; border-radius: 8px; }
 
 /* PRODUCT GRID */
 .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
@@ -60,15 +64,19 @@ body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--t
 .card-content { padding: 20px; }
 .price { color: var(--primary); font-weight: 800; font-size: 1.1rem; display: block; margin-bottom: 15px; }
 
-/* UTILS */
+/* UTILS & OVERLAYS */
 .container { margin-top: 100px; padding: 20px; max-width: 1200px; margin-inline: auto; }
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display: none; z-index: 1500; align-items: center; justify-content: center; }
-.label-tiny { font-size: 0.6rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; display: block; padding-left: 5px; font-weight: 700; }
-.user-email-text { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 20px; }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; z-index: 1500; align-items: center; justify-content: center; padding: 20px; }
+.popup-card { background: var(--surface); padding: 35px; border-radius: 24px; text-align: center; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 420px; }
 .styled-input { width: 100%; padding: 16px; background: var(--surface-light); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: #fff; margin-bottom: 12px; outline: none; }
 .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .total-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 800; font-size: 1.1rem; }
-.popup-card { background: var(--surface); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid var(--primary); width: 85%; max-width: 400px; }
-.purchase-card { background: var(--surface-light); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
-.purchase-name { font-size: 0.85rem; display: block; margin-bottom: 10px; font-weight: 500; }
+.remove-btn { background: rgba(255, 77, 77, 0.05); border: 1px solid rgba(255, 77, 77, 0.1); color: #ff4d4d; font-size: 0.65rem; padding: 4px 10px; border-radius: 6px; cursor: pointer; margin-top: 8px; font-weight: 600; text-transform: uppercase; }
+
+/* POLICY CONTENT STYLING */
+.policy-section { margin-bottom: 25px; text-align: left; }
+.policy-section h4 { color: var(--primary); font-size: 0.9rem; margin-bottom: 8px; text-transform: uppercase; }
+.policy-section p { font-size: 0.8rem; line-height: 1.5; color: var(--text-dim); }
+.label-tiny { font-size: 0.6rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; display: block; padding-left: 5px; font-weight: 700; }
+.user-email-text { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 20px; }
 .back-link { background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 600; margin-bottom: 20px; font-family: inherit; }
