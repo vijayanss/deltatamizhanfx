@@ -30,43 +30,55 @@ const SECURE_LINKS = {
 
 const POLICIES = {
     terms: `
-        <div class="policy-section">
-            <h4>1. No Refund Policy</h4>
-            <p>Due to the digital nature of assets, all sales are final. No refunds are provided once the payment is complete.</p>
-            <h4>2. Software Requirements</h4>
-            <p>Buyers must have <strong>Maxon</strong> and <strong>Adobe After Effects</strong> installed to use these project files.</p>
-            <h4>3. Required Plugins</h4>
-            <p>You confirm you have: <strong>S_Sharpen, Bcc Unsharp Mask, Looks, and S_SoftFocus</strong>.</p>
-            <h4>4. Usage License</h4>
-            <p>Files are for personal/commercial use in your own projects. Reselling or leaking is strictly forbidden.</p>
-        </div>`,
-    privacy: `<div class="policy-section"><h4>Privacy</h4><p>We only store your email to verify purchases and secure your account access.</p></div>`
+        <div class="policy-section"><h4 style="color:var(--primary); font-size:0.85rem; margin-bottom:8px;">1. No Refund Policy</h4><p style="font-size:0.8rem; color:var(--text-dim);">Digital assets are non-refundable. Once accessed, we cannot issue a refund.</p></div>
+        <div class="policy-section"><h4 style="color:var(--primary); font-size:0.85rem; margin-bottom:8px;">2. Plugin Requirements</h4><p style="font-size:0.8rem; color:var(--text-dim);">Requires: S_Sharpen, Bcc Unsharp Mask, Looks, and S_SoftFocus.</p></div>
+        <div class="policy-section"><h4 style="color:var(--primary); font-size:0.85rem; margin-bottom:8px;">3. Software Requirements</h4><p style="font-size:0.8rem; color:var(--text-dim);">Requires Maxon and After Effects.</p></div>
+        <div class="policy-section"><h4 style="color:var(--primary); font-size:0.85rem; margin-bottom:8px;">4. Usage Rights</h4><p style="font-size:0.8rem; color:var(--text-dim);">Personal use only. Reselling raw files is prohibited.</p></div>`,
+    privacy: `<div class="policy-section"><h4 style="color:var(--primary); font-size:0.85rem; margin-bottom:8px;">Data Protection</h4><p style="font-size:0.8rem; color:var(--text-dim);">We store email for account access only. Payments are processed securely via Razorpay.</p></div>`
 };
 
 let cart = [];
 let purchasedAssets = []; 
 
-// ✅ PASSWORD TOGGLE FIX (added)
-document.addEventListener("DOMContentLoaded", () => {
-    const togglePasswordBtn = document.getElementById("toggle-password");
-    const passwordField = document.getElementById("login-password");
+// --- UTILS ---
+const toggleDrawer = (id, show) => {
+    const el = document.getElementById(id);
+    if(show) el.classList.add('open'); else el.classList.remove('open');
+    document.getElementById('ui-overlay').style.display = show ? 'block' : 'none';
+};
 
-    if (togglePasswordBtn && passwordField) {
-        togglePasswordBtn.addEventListener("click", () => {
-            const isHidden = passwordField.type === "password";
-            passwordField.type = isHidden ? "text" : "password";
-            togglePasswordBtn.textContent = isHidden ? "HIDE" : "SHOW";
-        });
-    }
-});
+const showInputError = (id, msg) => {
+    const el = document.getElementById(id);
+    el.classList.add('input-error', 'shake');
+    el.value = ''; el.placeholder = msg;
+    setTimeout(() => el.classList.remove('shake'), 300);
+};
 
+const showSuccess = (title, msg) => {
+    document.getElementById('success-title').innerText = title;
+    document.getElementById('success-message').innerText = msg;
+    document.getElementById('success-popup').style.display = 'flex';
+};
+
+// --- RENDER ASSETS ---
+const renderPurchases = () => {
+    const container = document.getElementById('purchased-list-container');
+    container.innerHTML = purchasedAssets.length === 0 ? '<p style="color:var(--text-dim);">No assets purchased.</p>' : 
+        purchasedAssets.map(item => `
+            <div class="purchase-card">
+                <span class="purchase-name">${item.name}</span>
+                <a href="${SECURE_LINKS[item.id]}" target="_blank" class="action-btn login-primary small-btn">Download</a>
+            </div>`).join('');
+};
+
+// --- AUTH ---
 onAuthStateChanged(auth, async (user) => {
     if(user) {
         document.getElementById('auth-section').style.display = 'none';
         document.getElementById('user-profile').style.display = 'flex';
         document.getElementById('display-user-email').innerText = user.email;
         const snap = await getDoc(doc(db, "users", user.uid));
-        if (snap.exists()) purchasedAssets = snap.data().purchases || [];
+        if (snap.exists()) { purchasedAssets = snap.data().purchases || []; renderPurchases(); }
     } else {
         document.getElementById('auth-section').style.display = 'block';
         document.getElementById('user-profile').style.display = 'none';
@@ -74,70 +86,41 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-const toggleDrawer = (id, show) => {
-    const el = document.getElementById(id);
-    if(show) el.classList.add('open'); else el.classList.remove('open');
-    document.getElementById('ui-overlay').style.display = show ? 'block' : 'none';
-};
-
-// Listeners
-document.getElementById('menu-open').onclick = () => toggleDrawer('nav-drawer', true);
-document.getElementById('menu-close').onclick = () => toggleDrawer('nav-drawer', false);
-document.getElementById('cart-open').onclick = () => { toggleDrawer('cart-drawer', true); renderCart(); };
-document.getElementById('cart-close').onclick = () => toggleDrawer('cart-drawer', false);
-document.getElementById('policy-close').onclick = () => toggleDrawer('policies-drawer', false);
-document.getElementById('ui-overlay').onclick = () => {
-    ['nav-drawer', 'cart-drawer', 'policies-drawer'].forEach(id => toggleDrawer(id, false));
-};
-
-// Policy Drawer Actions
-document.getElementById('terms-btn').onclick = () => {
-    document.getElementById('policy-title').innerText = "Terms & Conditions";
-    document.getElementById('policy-content').innerHTML = POLICIES.terms;
-    toggleDrawer('policies-drawer', true);
-};
-document.getElementById('privacy-btn').onclick = () => {
-    document.getElementById('policy-title').innerText = "Privacy Policy";
-    document.getElementById('policy-content').innerHTML = POLICIES.privacy;
-    toggleDrawer('policies-drawer', true);
-};
-
-// Auth Actions
 document.getElementById('login-trigger').onclick = async () => {
     const e = document.getElementById('login-email').value, p = document.getElementById('login-password').value;
-    try { await signInWithEmailAndPassword(auth, e, p); } catch(err) { alert(err.message); }
+    if(!e) return showInputError('login-email', 'Username Required');
+    if(!p) return showInputError('login-password', 'Password Required');
+    try { 
+        await signInWithEmailAndPassword(auth, e, p); 
+        showSuccess("Login Successful", "Dashboard ready.");
+    } catch(err) { 
+        document.getElementById('error-message-text').innerText = "Incorrect details.";
+        document.getElementById('error-popup').style.display = 'flex';
+    }
 };
+
 document.getElementById('signup-trigger').onclick = async () => {
     const e = document.getElementById('login-email').value, p = document.getElementById('login-password').value;
-    try { await createUserWithEmailAndPassword(auth, e, p); document.getElementById('success-popup').style.display = 'flex'; } catch(err) { alert(err.message); }
+    if(!e) return showInputError('login-email', 'Username Required');
+    if(!p) return showInputError('login-password', 'Password Required');
+    try { 
+        await createUserWithEmailAndPassword(auth, e, p); 
+        showSuccess("Welcome!", "Account created.");
+    } catch(err) { 
+        document.getElementById('error-message-text').innerText = err.message;
+        document.getElementById('error-popup').style.display = 'flex';
+    }
 };
+
 document.getElementById('logout-trigger').onclick = () => signOut(auth);
 
-// Render Purchases
-document.getElementById('my-purchases-btn').onclick = () => {
-    document.getElementById('user-profile').style.display = 'none';
-    document.getElementById('purchases-view').style.display = 'block';
-    const container = document.getElementById('purchased-list-container');
-    container.innerHTML = purchasedAssets.length === 0 ? '<p style="color:var(--text-dim); padding:10px; font-size:0.8rem;">No assets found.</p>' : 
-        purchasedAssets.map(item => `
-            <div class="purchase-card">
-                <span class="purchase-name">${item.name}</span>
-                <a href="${SECURE_LINKS[item.id] || "#"}" target="_blank" class="action-btn login-primary small-btn">Download</a>
-            </div>
-        `).join('');
-};
-
-document.getElementById('back-to-profile').onclick = () => {
-    document.getElementById('user-profile').style.display = 'flex';
-    document.getElementById('purchases-view').style.display = 'none';
-};
-
-// Cart Actions
+// --- CART ---
 window.addItem = (id) => {
     const item = products.find(p => p.id === id);
     if (!cart.find(c => c.id === id)) { cart.push(item); document.getElementById('cart-count').innerText = cart.length; }
     toggleDrawer('cart-drawer', true); renderCart();
 };
+
 window.removeItem = (id) => {
     cart = cart.filter(item => item.id !== id);
     document.getElementById('cart-count').innerText = cart.length; renderCart();
@@ -146,56 +129,80 @@ window.removeItem = (id) => {
 function renderCart() {
     const list = document.getElementById('cart-items-list');
     let total = 0;
-    list.innerHTML = cart.length === 0 ? `<p class="empty-msg" style="padding:20px; color:var(--text-dim);">Cart is empty</p>` : 
-        cart.map(item => { total += item.price; return `<div class="cart-item"><div><span>${item.name}</span><button class="remove-btn" onclick="removeItem(${item.id})">Remove</button></div><span class="price-tag">₹${item.price}</span></div>`; }).join('');
-    document.getElementById('cart-total').innerHTML = `<span class="r-sym">₹</span>${total}`;
+    list.innerHTML = cart.length === 0 ? `<p style="padding:20px; color:var(--text-dim);">Empty</p>` : 
+        cart.map(item => { total += item.price; return `<div class="cart-item"><div><span>${item.name}</span><br><button class="remove-btn" onclick="removeItem(${item.id})">Remove</button></div><span>₹${item.price}</span></div>`; }).join('');
+    document.getElementById('cart-total').innerHTML = `₹${total}`;
 }
 
-// Checkout
 document.getElementById('checkout-trigger').onclick = () => {
-    if (!auth.currentUser) { alert("Login first"); toggleDrawer('nav-drawer', true); return; }
-    if (cart.length === 0) return;
-    document.getElementById('terms-confirmation-popup').style.display = 'flex';
-};
-
-document.getElementById('cancel-payment').onclick = () => {
-    document.getElementById('terms-confirmation-popup').style.display = 'none';
+    if (!auth.currentUser) { toggleDrawer('nav-drawer', true); return; }
+    if (cart.length > 0) document.getElementById('terms-confirmation-popup').style.display = 'flex';
 };
 
 document.getElementById('accept-terms-payment').onclick = () => {
     document.getElementById('terms-confirmation-popup').style.display = 'none';
     const user = auth.currentUser;
+    const totalAmount = cart.reduce((s, i) => s + i.price, 0) * 100;
+
     const options = {
-        "key": "rzp_live_SUb1nskZR2DxTy",
-        "amount": cart.reduce((s, i) => s + i.price, 0) * 100,
-        "currency": "INR",
-        "name": "Delta Tamizhan Fx",
-        "handler": async function () {
+        "key": "rzp_live_SUb1nskZR2DxTy", 
+        "amount": totalAmount, "currency": "INR", "name": "Delta Tamizhan Fx",
+        "handler": async function (response) {
             const ref = doc(db, "users", user.uid);
             const snap = await getDoc(ref);
             if (!snap.exists()) await setDoc(ref, { purchases: cart });
             else await updateDoc(ref, { purchases: arrayUnion(...cart) });
-            purchasedAssets = [...purchasedAssets, ...cart];
-            cart = []; document.getElementById('cart-count').innerText = 0; renderCart();
-            toggleDrawer('cart-drawer', false); toggleDrawer('nav-drawer', true);
-            document.getElementById('my-purchases-btn').click();
+            purchasedAssets = [...purchasedAssets, ...cart]; cart = []; renderCart();
+            document.getElementById('cart-count').innerText = 0; toggleDrawer('cart-drawer', false);
+            showSuccess("Success!", "Assets added.");
         },
-        "prefill": { "email": user.email },
-        "theme": { "color": "#00f2ff" }
+        "prefill": { "email": user.email }, "theme": { "color": "#00f2ff" }
     };
     new Razorpay(options).open();
 };
 
-// Init Grid
-document.getElementById('product-list').innerHTML = products.map(p => `
-    <div class="card">
-        <div class="thumb-container"><img src="${p.img}" class="product-img"></div>
-        <div class="card-content">
-            <h4>${p.name}</h4>
-            <span class="price"><span class="r-sym">₹</span>${p.price}</span>
-            <button class="action-btn login-primary" onclick="addItem(${p.id})">Add to Cart</button>
-        </div>
-    </div>
-`).join('');
+// --- REFRESH ---
+document.getElementById('refresh-purchases').onclick = async () => {
+    const user = auth.currentUser; if (!user) return;
+    const btn = document.getElementById('refresh-purchases'); btn.classList.add('spin-anim');
+    try {
+        const snap = await getDoc(doc(db, "users", user.uid));
+        if (snap.exists()) { purchasedAssets = snap.data().purchases || []; renderPurchases(); }
+    } catch (err) { console.error("Refresh failed:", err); }
+    setTimeout(() => btn.classList.remove('spin-anim'), 800);
+};
 
+// --- EVENTS ---
+document.getElementById('menu-open').onclick = () => toggleDrawer('nav-drawer', true);
+document.getElementById('menu-close').onclick = () => toggleDrawer('nav-drawer', false);
+document.getElementById('cart-open').onclick = () => { toggleDrawer('cart-drawer', true); renderCart(); };
+document.getElementById('cart-close').onclick = () => toggleDrawer('cart-drawer', false);
+document.getElementById('policy-close').onclick = () => toggleDrawer('policies-drawer', false);
+document.getElementById('cancel-payment').onclick = () => document.getElementById('terms-confirmation-popup').style.display = 'none';
 document.getElementById('close-popup').onclick = () => document.getElementById('success-popup').style.display = 'none';
+document.getElementById('close-error').onclick = () => document.getElementById('error-popup').style.display = 'none';
+document.getElementById('ui-overlay').onclick = () => { ['nav-drawer', 'cart-drawer', 'policies-drawer'].forEach(id => toggleDrawer(id, false)); };
+
+document.getElementById('terms-btn').onclick = () => { document.getElementById('policy-title').innerText = "Terms & Conditions"; document.getElementById('policy-content').innerHTML = POLICIES.terms; toggleDrawer('policies-drawer', true); };
+document.getElementById('privacy-btn').onclick = () => { document.getElementById('policy-title').innerText = "Privacy Policy"; document.getElementById('policy-content').innerHTML = POLICIES.privacy; toggleDrawer('policies-drawer', true); };
+
+document.getElementById('my-purchases-btn').onclick = () => {
+    document.getElementById('user-profile').style.display = 'none';
+    document.getElementById('purchases-view').style.display = 'block';
+    renderPurchases();
+};
+
+document.getElementById('back-to-profile').onclick = () => {
+    document.getElementById('user-profile').style.display = 'flex';
+    document.getElementById('purchases-view').style.display = 'none';
+};
+
+document.getElementById('toggle-password').onclick = () => {
+    const p = document.getElementById('login-password'); p.type = p.type === 'password' ? 'text' : 'password';
+    document.getElementById('toggle-password').innerText = p.type === 'password' ? 'SHOW' : 'HIDE';
+};
+
+document.getElementById('product-list').innerHTML = products.map(p => `
+    <div class="card"><div class="thumb-container"><img src="${p.img}" class="product-img"></div>
+    <div class="card-content"><h4>${p.name}</h4><span class="price">₹${p.price}</span>
+    <button class="action-btn login-primary" onclick="addItem(${p.id})">Add to Cart</button></div></div>`).join('');
